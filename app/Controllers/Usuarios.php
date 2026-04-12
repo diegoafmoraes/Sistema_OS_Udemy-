@@ -74,7 +74,7 @@ class Usuarios extends BaseController
 
     public function exibir(int $id = null) {
 
-        $usuario = $this->buscaUsuaroOu404($id);
+        $usuario = $this->buscaUsuarioOu404($id);
 
         $data = [
             'titulo' => "Detalhando o usuário " . esc($usuario->nome),
@@ -88,7 +88,7 @@ class Usuarios extends BaseController
     public function editar(int $id = null) 
     {
 
-        $usuario = $this->buscaUsuaroOu404($id);
+        $usuario = $this->buscaUsuarioOu404($id);
 
         $data = [
             'titulo' => "Editando o usuário " . esc($usuario->nome),
@@ -106,23 +106,45 @@ class Usuarios extends BaseController
             return redirect()->back();
         };
 
+        // Enviar/Renovar o hash do token do Form
         $retorno['token'] = csrf_hash();
-
-        $retorno['erro'] = "Mensagem de Erro de Validação";
-        $retorno['erros_model'] = [
-            'nome' => 'O nome é obrigatório',
-            'email' => 'Email inválido',
-            'password' => 'A senha é muito curta',
-        ];
-
-        return $this->response->setJSON($retorno);
-
-
+        
+        // Recupera o post da requisição
         $post = $this->request->getPost();
 
-        echo '<pre>';
-        print_r($post);
-        exit;
+        // esse é um bypass temporario
+        unset($post['password']);
+        unset($post['password_confirmation']);
+
+        // Validamos a existencia do usuario
+        $usuario = $this->buscaUsuarioOu404($post['id']);
+
+        // Preenche os atributos do usuario com os valores do 'post'
+        $usuario->fill($post);
+
+        // echo "<pre>"; print_r($usuario); exit;
+
+        if(!$usuario->hasChanged() ) {
+
+            $retorno['info'] = 'Não há dados para serem atualizados';
+            // Retorno para o AJAX request
+            return $this->response->setJSON($retorno);
+            
+        }
+
+        if($this->usuarioModel->save($usuario)) {
+
+            // VAMOS CONHECER MENSAGENS DE FLASH DATA
+
+            return $this->response->setJSON($retorno);
+            
+        }
+
+        // Retoprnamos os erros de validação
+        $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente';
+        $retorno['erros_model'] = $this->usuarioModel->errors();
+
+        return $this->response->setJSON($retorno);
 
     }
 
@@ -132,14 +154,13 @@ class Usuarios extends BaseController
      * @param integer|null $id
      * @return object
      */
-    private function buscaUsuaroOu404(int $id = null): object{
+    private function buscaUsuarioOu404(int $id = null): object{
 
         if(!$id || !$usuario = $this->usuarioModel->withDeleted(true)->find($id)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o usuário {$id}.");
         }
         
         return $usuario;
-
 
     }
 }

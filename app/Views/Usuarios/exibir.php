@@ -26,6 +26,7 @@
 
             <h5 class="card-title mt-2"><?php echo esc($usuario->nome); ?></h5>
             <h5 class="card-title mt-2"><?php echo esc($usuario->email); ?></h5>
+            <h5 class="card-title mt-2"><?php echo $usuario->ativo == true ? "<span class='text text-success'>Ativo</span>" : "<span class='text text-warning'>Inativo</span>" ; ?></h5>
             <p class="card-text">Criado em: <?php echo $usuario->criado_em->humanize(); ?></p>
             <p class="card-text">Atualizado em: <?php echo $usuario->atualizado_em->humanize() ?></p>
 
