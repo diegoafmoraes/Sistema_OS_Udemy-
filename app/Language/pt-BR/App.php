@@ -7,6 +7,9 @@ return [
         "HomeTitle"   => "Estendendo o layout principal através da view Home",
     ],
     "Users" => [
-        "UsersTitle"  => "Listagem de Usuários do Sistema",
+        "UsersTitle"  => "Usuários do Sistema",
     ],
+    "Customer" => [
+        "CustomerTitle" => "Clientes",
+    ]
 ];

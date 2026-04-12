@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UsuarioModel;
+use App\Entities\Usuario;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Usuarios extends BaseController
@@ -71,6 +72,20 @@ class Usuarios extends BaseController
 
     }
 
+    public function criar() {
+
+        $usuario = new Usuario();
+
+        // dd($usuario);
+
+        $data = [
+            'titulo' => "Criando novo usuário",
+            'usuario' => $usuario,
+        ];
+
+        return view('Usuarios/criar', $data);
+
+    }
 
     public function exibir(int $id = null) {
 
