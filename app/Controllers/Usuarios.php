@@ -112,12 +112,21 @@ class Usuarios extends BaseController
         // Recupera o post da requisição
         $post = $this->request->getPost();
 
-        // esse é um bypass temporario
-        unset($post['password']);
-        unset($post['password_confirmation']);
-
         // Validamos a existencia do usuario
         $usuario = $this->buscaUsuarioOu404($post['id']);
+
+        // Verifica se está vindo a senha ou não
+        // Se não foi informada uma senha, remove do $post,
+        // Se não for feita essa protecao, o metodo hashPassword do Model devolvera uma string vazia
+        if(empty($post['password'])) {
+
+            unset($post['password']);
+            unset($post['password_confirmation']);
+
+        }
+
+        // Conversao da senha em hash feita no Model, nao aqui
+        // $data['data']['password_hash']
 
         // Preenche os atributos do usuario com os valores do 'post'
         $usuario->fill($post);
@@ -134,10 +143,11 @@ class Usuarios extends BaseController
 
         if($this->usuarioModel->save($usuario)) {
 
-            // VAMOS CONHECER MENSAGENS DE FLASH DATA
+            // VAMOS CONHECER MENSAGENS DE FLASH DATA: https://codeigniter.com/user_guide/libraries/sessions.html#flashdata
+            session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
 
             return $this->response->setJSON($retorno);
-            
+
         }
 
         // Retoprnamos os erros de validação
