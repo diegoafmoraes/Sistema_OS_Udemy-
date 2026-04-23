@@ -19,6 +19,7 @@ class UsuarioModel extends Model
         'reset_hash',
         'reset_expira_em',
         'imagem',
+        'ativo'
         // campo 'ativo' nao vai - form manipula
     ];
 

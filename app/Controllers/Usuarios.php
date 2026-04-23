@@ -52,7 +52,7 @@ class Usuarios extends BaseController
                 'imagem' => $usuario->imagem,
                 'nome'   => anchor("usuarios/exibir/$usuario->id", esc($usuario->nome), 'title="Exibir usuário '.$usuario->nome.' "'),
                 'email'  => esc($usuario->email),
-                'ativo'  => ($usuario->ativo == true ? '<i class="fa fa-unlock text-warning"></i>&nbsp;Inativo' : '<i class="fa fa-lock text-success"></i>&nbsp;Ativo'),
+                'ativo'  => ($usuario->ativo == true ? '<i class="fa fa-unlock text-success"></i>&nbsp;Ativo' : '<i class="fa fa-lock text-warning"></i>&nbsp;Inativo'),
             ];
         }
 
@@ -127,6 +127,13 @@ class Usuarios extends BaseController
         // Recupera o post da requisição
         $post = $this->request->getPost();
 
+        // Avalia se senha e confirmacao de senha conferem
+        if($post['password'] != $post['password_confirmation']) {
+            $retorno['erro'] = "Senha e confirmação não conferem.";
+            // Retorno para o AJAX request
+            return $this->response->setJSON($retorno);
+        }
+
         // Validamos a existencia do usuario
         $usuario = $this->buscaUsuarioOu404($post['id']);
 
@@ -145,8 +152,6 @@ class Usuarios extends BaseController
 
         // Preenche os atributos do usuario com os valores do 'post'
         $usuario->fill($post);
-
-        // echo "<pre>"; print_r($usuario); exit;
 
         if(!$usuario->hasChanged() ) {
 
