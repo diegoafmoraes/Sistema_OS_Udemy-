@@ -12,7 +12,7 @@
 <!-- Aqui vao os conteudos da view -->
 <div class="row">
     <div class="col-lg-8">
-        <div class="block text-white">
+        <div class="block">
 
             <div class="block-body">
 
